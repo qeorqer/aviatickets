@@ -1,3 +1,3 @@
-# React app template
+# Aviatickets
 
-Created my own version for starting react apps with prettier and eslint configured
+Application for finding the cheapest flights

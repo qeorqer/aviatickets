@@ -1,7 +1,5 @@
 {
-  "name": "template",
-  "author": "George Pustovit <gorapus@gmail.com>",
-  "description": "My template for working with react",
+  "name": "aviatickets",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
