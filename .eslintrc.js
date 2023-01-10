@@ -20,14 +20,7 @@ module.exports = {
   plugins: ['react', 'react-hooks'],
   rules: {
     'react/jsx-filename-extension': 'off',
-    'import/extensions': [
-      'warn',
-      'ignorePackages',
-      {
-        ts: 'never',
-        tsx: 'never',
-      },
-    ],
+    'import/extensions': 'off',
     'no-shadow': 'off',
     'max-len': 'off',
     'react-hooks/rules-of-hooks': 'warn',
@@ -46,5 +39,8 @@ module.exports = {
     'click-events-have-key-events': 'off',
     'import/no-unresolved': 'off',
     'global-require': 'off',
+    'import/no-absolute-path': 'off',
+    'no-empty-pattern': 'off',
+    'prettier/prettier': 'warn',
   },
 };
