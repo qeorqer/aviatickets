@@ -17,7 +17,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  plugins: ['react', 'react-hooks'],
+  plugins: ['react', 'react-hooks', 'only-warn'],
   rules: {
     'react/jsx-filename-extension': 'off',
     'import/extensions': 'off',
@@ -41,6 +41,7 @@ module.exports = {
     'global-require': 'off',
     'import/no-absolute-path': 'off',
     'no-empty-pattern': 'off',
-    'prettier/prettier': 'warn',
+    'prettier/prettier': 'off',
+    'react/jsx-pascal-case': 'off',
   },
 };
