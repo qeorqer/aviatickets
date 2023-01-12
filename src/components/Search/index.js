@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { cabinClassOptions, numberOfAdultsOptions } from './utils';
 
 const Search = () => {
-  const [from, setFrom] = useState('LHR');
-  const [to, setTo] = useState('LAX');
+  const [from, setFrom] = useState('WAW');
+  const [to, setTo] = useState('LIS');
   const [departureDate, setDepartureDate] = useState({
     year: 2023,
     month: 2,
@@ -15,6 +15,7 @@ const Search = () => {
   const [numberOfAdults, setNumberOfAdults] = useState(numberOfAdultsOptions[0]);
   const [cabinClass, setCabinClass] = useState(cabinClassOptions[0].value);
   const [isOneWayTrip, setIsOneWayTrip] = useState(false);
+  const [tickets, setTickets] = useState([]);
 
   const handleSearch = async () => {
     console.log(from, to, departureDate, returnDate);
@@ -29,17 +30,40 @@ const Search = () => {
         to,
         departureDate,
         returnDate,
-        market: 'UA',
+        market: 'US',
         locale: 'en-US',
-        currency: 'UAH',
+        currency: 'USD',
         adults: numberOfAdults,
         cabinClass,
       }),
     });
 
-    const searchResults = await res.json();
+    const { flights } = await res.json();
+    const { itineraries, agents, legs, places } = flights.content.results;
 
-    console.log(searchResults);
+    console.log(itineraries);
+
+    const parsedTickets = [];
+
+    for (const legId in itineraries) {
+      const itinerary = itineraries[legId];
+      const ticket = {};
+
+      const agentId = itinerary?.pricingOptions[0].agentIds[0];
+
+      ticket.agent = agents[agentId];
+      ticket.price = itinerary?.pricingOptions[0].price?.amount;
+      ticket.deepLink = itinerary?.pricingOptions[0].items[0].deepLink;
+      ticket.leg = legs[legId];
+      ticket.origin = places[ticket.leg.originPlaceId];
+      ticket.destination = places[ticket.leg.destinationPlaceId];
+
+      parsedTickets.push(ticket);
+    }
+
+    setTickets(parsedTickets);
+
+    console.log(parsedTickets);
   };
 
   return (
@@ -139,6 +163,13 @@ const Search = () => {
             </Col>
           </Row>
         </Form>
+        {tickets.length && (
+          tickets.map((ticket, index) => (
+            <Card key={index}>
+              <Card.Body>This is some text within a card body.</Card.Body>
+            </Card>
+          ))
+        )}
       </Container>
     </section>
   );
