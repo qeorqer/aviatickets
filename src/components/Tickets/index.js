@@ -2,9 +2,9 @@ import * as React from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 
 import { ReactComponent as Loader } from '../../assets/icons/loader.svg';
+import { convertMinutesIntoHours } from './utils';
 
 const Tickets = ({ tickets, isTicketsLoading }) => {
-  console.log(tickets);
   return (
     <section className='mt-4'>
       <Container>
@@ -24,7 +24,7 @@ const Tickets = ({ tickets, isTicketsLoading }) => {
                   <Col xs={4}>
                    <p>{ticket.origin.name} - {ticket.destination.name}</p>
                     <p>Number of stops: {ticket.leg.stopCount}</p>
-                    <p>Duration: {ticket.leg.durationInMinutes}</p>
+                    <p>Duration: {convertMinutesIntoHours(ticket.leg.durationInMinutes)}</p>
                   </Col>
                   <Col xs={4}>
                    <p>Price: {ticket.price} {ticket.currency}</p>

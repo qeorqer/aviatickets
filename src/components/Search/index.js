@@ -1,29 +1,26 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
+import DatePicker from 'react-datepicker';
 
-import { cabinClassOptions, numberOfAdultsOptions } from './utils';
+
+import { cabinClassOptions, currencies, numberOfAdultsOptions } from './utils';
 
 const Search = ({ setTickets, setIsTicketsLoading }) => {
-  const [from, setFrom] = useState('WAW');
-  const [to, setTo] = useState('LIS');
-  const [departureDate, setDepartureDate] = useState({
-    year: 2023,
-    month: 2,
-    day: 13,
-  });
-  const [returnDate, setReturnDate] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [departureDate, setDepartureDate] = useState(new Date());
+  const [returnDate, setReturnDate] = useState(new Date());
   const [numberOfAdults, setNumberOfAdults] = useState(numberOfAdultsOptions[0]);
   const [cabinClass, setCabinClass] = useState(cabinClassOptions[0].value);
   const [isOneWayTrip, setIsOneWayTrip] = useState(false);
   const [currency, setCurrency] = useState('USD');
 
   const handleSearch = async () => {
-
-    setIsTicketsLoading(true);
     try {
-      const res = await fetch(process.env.REACT_APP_SCANNER_API_URL, {
+      setIsTicketsLoading(true);
+      const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/find-tickes`, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -32,7 +29,11 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
         body: JSON.stringify({
           from,
           to,
-          departureDate,
+          departureDate: {
+            year: departureDate.getFullYear(),
+            month: departureDate.getMonth() + 1,
+            day: departureDate.getDate(),
+          },
           returnDate,
           market: 'US',
           locale: 'en-US',
@@ -77,6 +78,40 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
     }
   };
 
+  const searchPlace = async (searchTerm) => {
+    try {
+      const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/search-place`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          market: 'US',
+          locale: 'en-US',
+          searchTerm,
+        }),
+      });
+
+      const searchResults = await res.json();
+      console.log(searchResults);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (from) {
+      searchPlace(from);
+    }
+  }, [from]);
+
+  useEffect(() => {
+    if (departureDate.getTime() > returnDate.getTime()){
+      setReturnDate(departureDate);
+    }
+  }, [departureDate]);
+
   return (
     <section>
       <Container>
@@ -111,6 +146,20 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
                 </Form.Select>
               </Form.Group>
             </Col>
+            <Col xs={2}>
+              <Form.Group>
+                <Form.Label>Currency</Form.Label>
+                <Form.Select
+                  size='sm'
+                  defaultValue={currency}
+                  onChange={(event) => setCurrency(event.target.value)}
+                >
+                  {currencies.map((option) => (
+                    <option value={option.code} key={option.code}>{option.code} - {option.symbol}</option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+            </Col>
             <Col xs={2} className='d-flex align-items-end'>
               <Form.Check
                 type='switch'
@@ -126,6 +175,7 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
               <Form.Group>
                 <Form.Label>From</Form.Label>
                 <Form.Control
+                  size='sm'
                   type='text'
                   placeholder='From'
                   value={from}
@@ -137,6 +187,7 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
               <Form.Group>
                 <Form.Label>To</Form.Label>
                 <Form.Control
+                  size='sm'
                   type='text'
                   placeholder='To'
                   value={to}
@@ -147,28 +198,33 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>Departure Date</Form.Label>
-                <Form.Control
-                  type='Date'
-                  placeholder='Select departure date'
-                  value={departureDate}
-                  onChange={(e) => setDepartureDate(e.target.value)}
+                <DatePicker
+                  selected={departureDate}
+                  onChange={(newDate) => setDepartureDate(newDate || new Date())}
+                  className='form-control form-control-sm'
+                  dateFormat='dd/MM/yyyy'
+                  onFocus={(e) => (e.target.readOnly = true)}
+                  minDate={new Date()}
                 />
               </Form.Group>
             </Col>
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>Return Date</Form.Label>
-                <Form.Control
+                <DatePicker
+                  selected={returnDate}
+                  onChange={(newDate) => setReturnDate(newDate || new Date())}
+                  className='form-control form-control-sm'
+                  dateFormat='dd/MM/yyyy'
+                  onFocus={(e) => (e.target.readOnly = true)}
+                  minDate={departureDate}
                   disabled={isOneWayTrip}
-                  type='Date'
-                  placeholder='Select arrival date'
-                  value={returnDate}
-                  onChange={(e) => setReturnDate(e.target.value)}
                 />
               </Form.Group>
             </Col>
             <Col xs={2} className='d-flex align-items-end'>
-              <Button variant='dark' className='w-100' onClick={handleSearch}>
+              <Button
+                size='sm' variant='dark' className='w-100' onClick={handleSearch}>
                 Search
               </Button>
             </Col>
