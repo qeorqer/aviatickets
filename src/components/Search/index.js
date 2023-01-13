@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, Row } from 'react-bootstrap';
+import { v4 as uuidv4 } from 'uuid';
+
 import { cabinClassOptions, numberOfAdultsOptions } from './utils';
 
-const Search = () => {
+const Search = ({ setTickets, setIsTicketsLoading }) => {
   const [from, setFrom] = useState('WAW');
   const [to, setTo] = useState('LIS');
   const [departureDate, setDepartureDate] = useState({
@@ -15,55 +17,64 @@ const Search = () => {
   const [numberOfAdults, setNumberOfAdults] = useState(numberOfAdultsOptions[0]);
   const [cabinClass, setCabinClass] = useState(cabinClassOptions[0].value);
   const [isOneWayTrip, setIsOneWayTrip] = useState(false);
-  const [tickets, setTickets] = useState([]);
+  const [currency, setCurrency] = useState('USD');
 
   const handleSearch = async () => {
-    console.log(from, to, departureDate, returnDate);
-    const res = await fetch(process.env.REACT_APP_SCANNER_API_URL, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to,
-        departureDate,
-        returnDate,
-        market: 'US',
-        locale: 'en-US',
-        currency: 'USD',
-        adults: numberOfAdults,
-        cabinClass,
-      }),
-    });
 
-    const { flights } = await res.json();
-    const { itineraries, agents, legs, places } = flights.content.results;
+    setIsTicketsLoading(true);
+    try {
+      const res = await fetch(process.env.REACT_APP_SCANNER_API_URL, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from,
+          to,
+          departureDate,
+          returnDate,
+          market: 'US',
+          locale: 'en-US',
+          currency,
+          adults: numberOfAdults,
+          cabinClass,
+        }),
+      });
 
-    console.log(itineraries);
+      const { flights } = await res.json();
+      const { itineraries, agents, legs, places } = flights.content.results;
 
-    const parsedTickets = [];
+      const parsedTickets = [];
 
-    for (const legId in itineraries) {
-      const itinerary = itineraries[legId];
-      const ticket = {};
+      for (const legId in itineraries) {
+        const itinerary = itineraries[legId];
+        const ticket = {};
 
-      const agentId = itinerary?.pricingOptions[0].agentIds[0];
 
-      ticket.agent = agents[agentId];
-      ticket.price = itinerary?.pricingOptions[0].price?.amount;
-      ticket.deepLink = itinerary?.pricingOptions[0].items[0].deepLink;
-      ticket.leg = legs[legId];
-      ticket.origin = places[ticket.leg.originPlaceId];
-      ticket.destination = places[ticket.leg.destinationPlaceId];
+        const agentId = itinerary?.pricingOptions[0].agentIds[0];
 
-      parsedTickets.push(ticket);
+        ticket.id = uuidv4();
+        ticket.currency = currency;
+        ticket.agent = agents[agentId];
+        ticket.price = itinerary?.pricingOptions[0].price?.amount;
+        ticket.deepLink = itinerary?.pricingOptions[0].items[0].deepLink;
+        ticket.leg = legs[legId];
+        ticket.origin = places[ticket.leg.originPlaceId];
+        ticket.destination = places[ticket.leg.destinationPlaceId];
+
+        if (ticket.price) {
+          ticket.price /= 1000;
+        }
+
+        parsedTickets.push(ticket);
+      }
+
+      setTickets(parsedTickets);
+      setIsTicketsLoading(false);
+    } catch (err) {
+      setIsTicketsLoading(false);
     }
-
-    setTickets(parsedTickets);
-
-    console.log(parsedTickets);
   };
 
   return (
@@ -163,13 +174,6 @@ const Search = () => {
             </Col>
           </Row>
         </Form>
-        {tickets.length && (
-          tickets.map((ticket, index) => (
-            <Card key={index}>
-              <Card.Body>This is some text within a card body.</Card.Body>
-            </Card>
-          ))
-        )}
       </Container>
     </section>
   );
