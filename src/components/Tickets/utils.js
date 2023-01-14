@@ -12,3 +12,15 @@ export const checkIfLessThen10 = (value) => {
 
   return value;
 };
+
+export const sortingTypes = {
+  byPrice: 'BY_PRICE',
+  byDuration: 'BY_DURATION',
+  byRating: 'BY_RATING',
+};
+
+export const stopsOptions = {
+  direct: 'DIRECT',
+  oneStop: 'ONE_STOP',
+  allFlights: 'ALL_FLIGHS',
+};

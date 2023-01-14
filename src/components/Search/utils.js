@@ -61,12 +61,12 @@ export const currencies = [
         label: 'UAH - грн.',
       },
       {
-        value: 'EUR',
-        label: 'EUR - €',
-      },
-      {
         value: 'USD',
         label: 'USD - $',
+      },
+      {
+        value: 'EUR',
+        label: 'EUR - €',
       },
     ],
   },
