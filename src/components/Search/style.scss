@@ -9,4 +9,12 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
+
+  form {
+    background-color: var(--white);
+    padding: 10px 15px 30px;
+    border-radius: 10px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
 }

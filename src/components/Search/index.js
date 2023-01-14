@@ -126,7 +126,7 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
     <section className='search'>
       <Container>
         <Form>
-          <Row className='mb-2 mt-4'>
+          <Row className='mb-2 mt-4 justify-content-center'>
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>Number of adults</Form.Label>
@@ -170,7 +170,7 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
               />
             </Col>
           </Row>
-          <Row>
+          <Row className='justify-content-center'>
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>From</Form.Label>
@@ -224,7 +224,7 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
             </Col>
             <Col xs={2} className='d-flex align-items-end'>
               <Button
-                variant='dark'
+                variant='primary'
                 className='w-100'
                 onClick={handleSearch}
               >
