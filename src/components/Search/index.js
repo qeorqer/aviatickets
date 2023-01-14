@@ -29,6 +29,7 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
           type: 'error',
         });
       }
+
       setIsTicketsLoading(true);
       const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/find-tickes`, {
         method: 'POST',
@@ -44,7 +45,11 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
             month: departureDate.getMonth() + 1,
             day: departureDate.getDate(),
           },
-          returnDate,
+          returnDate: isOneWayTrip ? null : {
+            year: returnDate.getFullYear(),
+            month: returnDate.getMonth() + 1,
+            day: returnDate.getDate(),
+          },
           market: 'US',
           locale: 'en-US',
           currency,
@@ -58,10 +63,9 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
 
       const parsedTickets = [];
 
-      for (const legId in itineraries) {
-        const itinerary = itineraries[legId];
+      for (const itineraryId in itineraries) {
+        const itinerary = itineraries[itineraryId];
         const ticket = {};
-
 
         const agentId = itinerary?.pricingOptions[0].agentIds[0];
 
@@ -70,9 +74,9 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
         ticket.agent = agents[agentId];
         ticket.price = itinerary?.pricingOptions[0].price?.amount;
         ticket.deepLink = itinerary?.pricingOptions[0].items[0].deepLink;
-        ticket.leg = legs[legId];
-        ticket.origin = places[ticket.leg.originPlaceId];
-        ticket.destination = places[ticket.leg.destinationPlaceId];
+        ticket.legs = itinerary.legIds.map((legId) => legs[legId]);
+        ticket.origins = ticket.legs.map((leg) => places[leg.originPlaceId]);
+        ticket.destinations = ticket.legs.map((leg) => places[leg.destinationPlaceId]);
 
         if (ticket.price) {
           ticket.price /= 1000;
@@ -113,12 +117,11 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
         .filter((place) => place.type !== 'PLACE_TYPE_COUNTRY')
         .map(((place) => ({
         value: place.iataCode,
-        label: `${place?.name}(${place.iataCode})`,
+        label: `${place.type === 'PLACE_TYPE_AIRPORT' ? '✈️' : '🏙'} ${place?.name}(${place.iataCode})`,
       })));
 
       return formattedPlaces;
     } catch (err) {
-      console.log(err);
     }
   };
 

@@ -4,3 +4,11 @@ export const convertMinutesIntoHours = (minutes) => {
 
   return `${hours} hours ${minutesLeft} minutes`
 }
+
+export const checkIfLessThen10 = (value) => {
+  if (value < 10) {
+    return `0${value}`;
+  }
+
+  return value;
+}
