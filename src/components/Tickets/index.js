@@ -4,12 +4,16 @@ import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { ReactComponent as Loader } from '../../assets/icons/loader.svg';
 import { convertMinutesIntoHours } from './utils';
 
-const Tickets = ({ tickets, isTicketsLoading }) => {
+const Tickets = ({ tickets, isTicketsLoading, isNoTickets }) => {
   return (
     <section className='mt-4'>
       <Container>
         {isTicketsLoading && (
           <Loader />
+        )}
+
+        {isNoTickets && (
+          <p className='fs-4 text-center'>Unfortunately, there are not tickets. Try another search</p>
         )}
 
         {tickets.length && !isTicketsLoading ? (

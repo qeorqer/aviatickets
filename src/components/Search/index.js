@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import './style.scss';
 import { cabinClassOptions, currencies, numberOfAdultsOptions } from './utils';
 
-const Search = ({ setTickets, setIsTicketsLoading }) => {
+const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [departureDate, setDepartureDate] = useState(new Date());
@@ -22,6 +22,8 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
 
   const handleSearch = async () => {
     try {
+      setIsNoTickets(false);
+
       if (!from || !to) {
         return toast('All fields are required', {
           type: 'error',
@@ -81,6 +83,10 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
 
       setTickets(parsedTickets);
       setIsTicketsLoading(false);
+
+      if (!parsedTickets.length) {
+        setIsNoTickets(true);
+      }
     } catch (err) {
       setIsTicketsLoading(false);
     }
