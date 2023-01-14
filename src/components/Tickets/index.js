@@ -210,7 +210,7 @@ const Tickets = ({ tickets, isTicketsLoading, isNoTickets }) => {
                             Price: {ticket.price} {ticket.currency}
                           </p>
                           <Button
-                            variant="dark"
+                            variant="primary"
                             href={ticket.deepLink}
                             className="w-50"
                           >
