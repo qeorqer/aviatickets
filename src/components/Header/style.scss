@@ -1,6 +1,21 @@
+.header {
+    position: absolute;
+    left: 0;
+    top: 50px;
+    right: 0;
+    font-family: 'Acme', sans-serif;
+
+    h2 {
+        font-size: 25px;
+        color: var(--white);
+        margin-top: -10px;
+    }
+}
+
 .logo {
     text-decoration: none;
-    color: var(--primary);
+    color: var(--yellow);
+    -webkit-text-stroke: 2px var(--black);
 
     &:hover {
         color: var(--primary);

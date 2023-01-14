@@ -1,22 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 import './style.scss';
 
 const Header = () => {
   return (
-    <header>
+    <header className='header'>
       <Container>
-        <Row>
-          <Col xs={6} className="d-flex align-items-center">
-            <h1>
-              <Link to="/" className="logo">
-                AviaTickets
-              </Link>
-            </h1>
-          </Col>
-        </Row>
+        <div className='text-center'>
+          <h1>
+            <Link to="/" className="logo">
+              AviaTickets
+            </Link>
+          </h1>
+          <h2>Search for the cheapest flights</h2>
+        </div>
       </Container>
     </header>
   );

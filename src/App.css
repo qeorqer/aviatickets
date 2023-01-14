@@ -1,8 +1,10 @@
 :root {
   --primary: #4290ff;
   --white: #fff;
+  --yellow: #FFAC01;
+  --black: #000000;
 }
 
 body {
-  font-family: 'Noto Sans', sans-serif!important;
+  font-family: 'Oswald', sans-serif!important;
 }

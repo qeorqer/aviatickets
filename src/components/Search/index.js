@@ -4,9 +4,10 @@ import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { v4 as uuidv4 } from 'uuid';
 import DatePicker from 'react-datepicker';
 import Select from 'react-select';
-
 import AsyncSelect from 'react-select/async';
 import { toast } from 'react-toastify';
+
+import './style.scss';
 import { cabinClassOptions, currencies, numberOfAdultsOptions } from './utils';
 
 const Search = ({ setTickets, setIsTicketsLoading }) => {
@@ -122,10 +123,9 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
   }, [departureDate]);
 
   return (
-    <section>
+    <section className='search'>
       <Container>
-        <h2>Search the cheapest flights tickets</h2>
-        <Form className='search-flights'>
+        <Form>
           <Row className='mb-2 mt-4'>
             <Col xs={2}>
               <Form.Group>
