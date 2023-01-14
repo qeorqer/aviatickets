@@ -6,9 +6,9 @@ import './style.scss';
 
 const Header = () => {
   return (
-    <header className='header'>
+    <header className="header">
       <Container>
-        <div className='text-center'>
+        <div className="text-center">
           <h1>
             <Link to="/" className="logo">
               AviaTickets

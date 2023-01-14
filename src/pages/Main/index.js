@@ -12,11 +12,18 @@ const Main = () => {
   return (
     <>
       <Header />
-      <Search setIsTicketsLoading={setIsTicketsLoading} setTickets={setTickets} setIsNoTickets={setIsNoTickets} />
-      <Tickets tickets={tickets} isTicketsLoading={isTicketsLoading} isNoTickets={isNoTickets} />
+      <Search
+        setIsTicketsLoading={setIsTicketsLoading}
+        setTickets={setTickets}
+        setIsNoTickets={setIsNoTickets}
+      />
+      <Tickets
+        tickets={tickets}
+        isTicketsLoading={isTicketsLoading}
+        isNoTickets={isNoTickets}
+      />
     </>
   );
 };
 
 export default Main;
-

@@ -15,7 +15,9 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
   const [to, setTo] = useState('');
   const [departureDate, setDepartureDate] = useState(new Date());
   const [returnDate, setReturnDate] = useState(new Date());
-  const [numberOfAdults, setNumberOfAdults] = useState(numberOfAdultsOptions[0].value);
+  const [numberOfAdults, setNumberOfAdults] = useState(
+    numberOfAdultsOptions[0].value,
+  );
   const [cabinClass, setCabinClass] = useState(cabinClassOptions[0].value);
   const [isOneWayTrip, setIsOneWayTrip] = useState(false);
   const [currency, setCurrency] = useState('USD');
@@ -31,32 +33,37 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
       }
 
       setIsTicketsLoading(true);
-      const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/find-tickes`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${process.env.REACT_APP_SCANNER_API_URL}/find-tickes`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from,
+            to,
+            departureDate: {
+              year: departureDate.getFullYear(),
+              month: departureDate.getMonth() + 1,
+              day: departureDate.getDate(),
+            },
+            returnDate: isOneWayTrip
+              ? null
+              : {
+                  year: returnDate.getFullYear(),
+                  month: returnDate.getMonth() + 1,
+                  day: returnDate.getDate(),
+                },
+            market: 'US',
+            locale: 'en-US',
+            currency,
+            adults: numberOfAdults,
+            cabinClass,
+          }),
         },
-        body: JSON.stringify({
-          from,
-          to,
-          departureDate: {
-            year: departureDate.getFullYear(),
-            month: departureDate.getMonth() + 1,
-            day: departureDate.getDate(),
-          },
-          returnDate: isOneWayTrip ? null : {
-            year: returnDate.getFullYear(),
-            month: returnDate.getMonth() + 1,
-            day: returnDate.getDate(),
-          },
-          market: 'US',
-          locale: 'en-US',
-          currency,
-          adults: numberOfAdults,
-          cabinClass,
-        }),
-      });
+      );
 
       const { flights } = await res.json();
       const { itineraries, agents, legs, places } = flights.content.results;
@@ -76,7 +83,9 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
         ticket.deepLink = itinerary?.pricingOptions[0].items[0].deepLink;
         ticket.legs = itinerary.legIds.map((legId) => legs[legId]);
         ticket.origins = ticket.legs.map((leg) => places[leg.originPlaceId]);
-        ticket.destinations = ticket.legs.map((leg) => places[leg.destinationPlaceId]);
+        ticket.destinations = ticket.legs.map(
+          (leg) => places[leg.destinationPlaceId],
+        );
 
         if (ticket.price) {
           ticket.price /= 1000;
@@ -98,31 +107,35 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
 
   const getOptions = async (searchTerm) => {
     try {
-      const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/search-place`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+      const res = await fetch(
+        `${process.env.REACT_APP_SCANNER_API_URL}/search-place`,
+        {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            market: 'US',
+            locale: 'en-US',
+            searchTerm,
+          }),
         },
-        body: JSON.stringify({
-          market: 'US',
-          locale: 'en-US',
-          searchTerm,
-        }),
-      });
+      );
 
       const { flights } = await res.json();
 
       const formattedPlaces = flights?.places
         .filter((place) => place.type !== 'PLACE_TYPE_COUNTRY')
-        .map(((place) => ({
-        value: place.iataCode,
-        label: `${place.type === 'PLACE_TYPE_AIRPORT' ? '✈️' : '🏙'} ${place?.name}(${place.iataCode})`,
-      })));
+        .map((place) => ({
+          value: place.iataCode,
+          label: `${place.type === 'PLACE_TYPE_AIRPORT' ? '✈️' : '🏙'} ${
+            place?.name
+          }(${place.iataCode})`,
+        }));
 
       return formattedPlaces;
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   useEffect(() => {
@@ -132,10 +145,10 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
   }, [departureDate]);
 
   return (
-    <section className='search'>
+    <section className="search">
       <Container>
         <Form>
-          <Row className='mb-2 mt-4 justify-content-center'>
+          <Row className="mb-2 mt-4 justify-content-center">
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>Number of adults</Form.Label>
@@ -143,7 +156,9 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
                   options={numberOfAdultsOptions}
                   defaultValue={numberOfAdultsOptions[0]}
                   closeMenuOnScroll
-                  onChange={(numberOfAdults) => setNumberOfAdults(numberOfAdults.value)}
+                  onChange={(numberOfAdults) =>
+                    setNumberOfAdults(numberOfAdults.value)
+                  }
                 />
               </Form.Group>
             </Col>
@@ -169,17 +184,17 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
                 />
               </Form.Group>
             </Col>
-            <Col xs={2} className='d-flex align-items-end'>
+            <Col xs={2} className="d-flex align-items-end">
               <Form.Check
-                type='switch'
+                type="switch"
                 defaultChecked={false}
-                label='One Way'
+                label="One Way"
                 value={isOneWayTrip}
                 onChange={(event) => setIsOneWayTrip(event.target.checked)}
               />
             </Col>
           </Row>
-          <Row className='justify-content-center'>
+          <Row className="justify-content-center">
             <Col xs={2}>
               <Form.Group>
                 <Form.Label>From</Form.Label>
@@ -209,9 +224,11 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
                 <Form.Label>Departure Date</Form.Label>
                 <DatePicker
                   selected={departureDate}
-                  onChange={(newDate) => setDepartureDate(newDate || new Date())}
-                  className='form-control'
-                  dateFormat='dd/MM/yyyy'
+                  onChange={(newDate) =>
+                    setDepartureDate(newDate || new Date())
+                  }
+                  className="form-control"
+                  dateFormat="dd/MM/yyyy"
                   onFocus={(e) => (e.target.readOnly = true)}
                   minDate={new Date()}
                 />
@@ -223,18 +240,18 @@ const Search = ({ setTickets, setIsTicketsLoading, setIsNoTickets }) => {
                 <DatePicker
                   selected={returnDate}
                   onChange={(newDate) => setReturnDate(newDate || new Date())}
-                  className='form-control'
-                  dateFormat='dd/MM/yyyy'
+                  className="form-control"
+                  dateFormat="dd/MM/yyyy"
                   onFocus={(e) => (e.target.readOnly = true)}
                   minDate={departureDate}
                   disabled={isOneWayTrip}
                 />
               </Form.Group>
             </Col>
-            <Col xs={2} className='d-flex align-items-end'>
+            <Col xs={2} className="d-flex align-items-end">
               <Button
-                variant='primary'
-                className='w-100'
+                variant="primary"
+                className="w-100"
                 onClick={handleSearch}
               >
                 Search

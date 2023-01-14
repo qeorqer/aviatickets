@@ -2,6 +2,7 @@
   "name": "aviatickets",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://qeorqer.github.io/aviatickets",
   "dependencies": {
     "bootstrap": "^5.2.3",
     "react": "^18.2.0",
@@ -21,7 +22,9 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
-    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc.json"
+    "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc.json",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "browserslist": {
     "production": [
@@ -45,6 +48,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "gh-pages": "^4.0.0",
     "prettier": "2.8.2"
   }
 }
