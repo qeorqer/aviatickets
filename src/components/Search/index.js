@@ -6,6 +6,7 @@ import DatePicker from 'react-datepicker';
 import Select from 'react-select';
 
 import AsyncSelect from 'react-select/async';
+import { toast } from 'react-toastify';
 import { cabinClassOptions, currencies, numberOfAdultsOptions } from './utils';
 
 const Search = ({ setTickets, setIsTicketsLoading }) => {
@@ -20,6 +21,11 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
 
   const handleSearch = async () => {
     try {
+      if (!from || !to) {
+        return toast('All fields are required', {
+          type: 'error',
+        });
+      }
       setIsTicketsLoading(true);
       const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/find-tickes`, {
         method: 'POST',
@@ -79,28 +85,6 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
     }
   };
 
-  const searchPlace = async (searchTerm) => {
-    try {
-      const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/search-place`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          market: 'US',
-          locale: 'en-US',
-          searchTerm,
-        }),
-      });
-
-      const searchResults = await res.json();
-      console.log(searchResults);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   const getOptions = async (searchTerm) => {
     try {
       const res = await fetch(`${process.env.REACT_APP_SCANNER_API_URL}/search-place`, {
@@ -117,11 +101,12 @@ const Search = ({ setTickets, setIsTicketsLoading }) => {
       });
 
       const { flights } = await res.json();
-      const { places } = flights;
 
-      const formattedPlaces = places.map(((place) => ({
+      const formattedPlaces = flights?.places
+        .filter((place) => place.type !== 'PLACE_TYPE_COUNTRY')
+        .map(((place) => ({
         value: place.iataCode,
-        label: `${place?.name}`,
+        label: `${place?.name}(${place.iataCode})`,
       })));
 
       return formattedPlaces;
