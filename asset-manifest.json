@@ -1,15 +1,14 @@
 {
   "files": {
-    "main.css": "/aviatickets/static/css/main.e4a95308.css",
+    "main.css": "/aviatickets/static/css/main.82c44431.css",
     "main.js": "/aviatickets/static/js/main.902f044a.js",
-    "static/media/bg.png": "/aviatickets/static/media/bg.fcc5ef46ab6bd11ef5fa.png",
     "static/media/loader.svg": "/aviatickets/static/media/loader.693483a910863e3c5a1894e3512bcb79.svg",
     "index.html": "/aviatickets/index.html",
-    "main.e4a95308.css.map": "/aviatickets/static/css/main.e4a95308.css.map",
+    "main.82c44431.css.map": "/aviatickets/static/css/main.82c44431.css.map",
     "main.902f044a.js.map": "/aviatickets/static/js/main.902f044a.js.map"
   },
   "entrypoints": [
-    "static/css/main.e4a95308.css",
+    "static/css/main.82c44431.css",
     "static/js/main.902f044a.js"
   ]
 }
